@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fucking Terminal Website</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            margin: 0;
+        }
+        #terminal {
+            height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #input-line {
+            display: flex;
+        }
+        #prompt {
+            margin-right: 10px;
+        }
+        #command-input {
+            background-color: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            width: 80%;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div>Welcome to the <strong>FUCKING TERMINAL</strong>. Type 'help' for commands.</div>
+        <div id="input-line">
+            <span id="prompt">user@terminal:~$</span>
+            <input type="text" id="command-input" autofocus>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const commandInput = document.getElementById('command-input');
+
+        // Command list
+        const commands = {
+            help: "Available commands: help, clear, echo, ls, date",
+            clear: function() { terminal.innerHTML = '<div id="input-line"><span id="prompt">user@terminal:~$</span><input type="text" id="command-input" autofocus></div>'; },
+            echo: function(args) { return args.join(' '); },
+            ls: "file1.txt file2.txt secret.sh",
+            date: function() { return new Date().toString(); }
+        };
+
+        commandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const commandText = commandInput.value.trim();
+                const parts = commandText.split(' ');
+                const cmd = parts[0];
+                const args = parts.slice(1);
+
+                // Add command to history
+                terminal.innerHTML += `<div>user@terminal:~$ ${commandText}</div>`;
+
+                // Execute command
+                if (commands[cmd]) {
+                    if (typeof commands[cmd] === 'function') {
+                        terminal.innerHTML += `<div>${commands[cmd](args)}</div>`;
+                    } else {
+                        terminal.innerHTML += `<div>${commands[cmd]}</div>`;
+                    }
+                } else {
+                    terminal.innerHTML += `<div>Command not found: ${cmd}</div>`;
+                }
+
+                // Reset input
+                commandInput.value = '';
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
